@@ -7,6 +7,8 @@ Rails.application.routes.draw do
   # root "articles#index"
   post "/signup", to: "sessions#signup"
   post "/login",  to: "sessions#login"
+  post "/add_item",  to: "carts#add_item"
+
   resources :orders
   resources :products
 

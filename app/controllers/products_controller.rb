@@ -1,8 +1,9 @@
-class ProductsController < ApplicationController 
-  # before_action :current_user, :only => [:index, :edit, :update, :destroy]
+# class ProductsController < ApplicationController 
+#   before_action :current_user, :only => [:index, :edit, :update, :destroy]
+  # before_action :is_admin?, :only => [:create]
   
   def index
-  	@products=Product.all
+  	@products=current_user.products.all()
   	render json: @products.to_json, status: :ok
   end
 
@@ -25,12 +26,12 @@ class ProductsController < ApplicationController
 
 
   def create
+    byebug
     @product = Product.new(product_params)
-      if @product.save
-        render json: @product.to_json, status: :created
-      else
-        render json: {erors: "product not created" }, status: :not_createds
-      end
+    if @product.save
+      render json: @product.to_json, status: :created
+    else
+      render json: {erors: "product not created" }, status: :not_createds
     end
   end
 
@@ -49,7 +50,15 @@ class ProductsController < ApplicationController
       render json:{data: @product_to_json}, status: :deleted
     else
       render json:{errors: "product not_found"}, status: :not_found
+    end
   end
+
+
+  def total_price
+    products.to_a.sum(&:full_price)
+  end
+
+
 
   private
 

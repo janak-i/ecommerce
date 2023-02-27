@@ -4,7 +4,6 @@ class ApplicationController < ActionController::Base
 
 
 	def authentication
-		byebug
 		decode_data = decode_user_data(request.headers["token"])
 		user_data = decode_data[0]["user_data"] unless !decode_data
 		user = user_data
@@ -30,7 +29,12 @@ class ApplicationController < ActionController::Base
 	end
 
 	def current_user
+		byebug
 		@current_user ||= User.find_by(id: params["id"])
+	end
+
+	def is_admin?
+		user_role == ‘admin’
 	end
 
 end
