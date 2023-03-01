@@ -1,6 +1,7 @@
 class OrdersController < ApplicationController
 
   def index
+    byebug
     @orders = Order.all
     @orders = if params[:search]
                 Order.search(params[:search]).order('created_at ASC')

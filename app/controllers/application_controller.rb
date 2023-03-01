@@ -28,15 +28,21 @@ class ApplicationController < ActionController::Base
 		end
 	end
 
-	def current_user
+	def is_admin
 		byebug
-		@current_user ||= User.find_by(id: params["id"])
+		if product.user_role == "admin"
+		end
 	end
-
-	def is_admin?
-		user_role == ‘admin’
-	end
-
+	# def current_cart
+	# 	if session[:cart_id]
+	# 		@current_cart ||= Cart.find(session[:cart_id])
+	# 	end
+	# 	if session[:cart_id].nil?
+	# 		@current_cart = Cart.create!
+	# 		session[:cart_id] = @current_cart.id
+	# 	end
+	# 	@current_cart
+	# end
 end
 
 
