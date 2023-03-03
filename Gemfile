@@ -65,6 +65,11 @@ end
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
+  gem 'factory_bot_rails'
+
+  gem 'faker', '~> 1.6', '>= 1.6.6'
+  gem 'rspec-rails', '~> 4.1.0'
+  gem 'shoulda-matchers', '~> 5.3.0'
 
   # Add speed badges [https://github.com/MiniProfiler/rack-mini-profiler]
   # gem "rack-mini-profiler"

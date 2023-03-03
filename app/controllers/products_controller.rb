@@ -7,6 +7,14 @@ class ProductsController < ApplicationController
     render json: @products.to_json, status: :ok
   end
 
+
+  def index
+    #here we are calling the scope method to find the name of the product#
+    @products = Product.find_name
+    render json: @products.to_json, status: :ok
+  end
+
+
   def show 
   	@product=Product.find(params[:product_id])
     if @product.present?
@@ -26,7 +34,6 @@ class ProductsController < ApplicationController
 
 
   def create
-    byebug
     @product = Product.new(product_params)
     if @product.save
       render json: @product.to_json, status: :created
@@ -56,7 +63,7 @@ class ProductsController < ApplicationController
   private
 
   def product_params
-    params.require(:product).permit(:name, :description,  :price, :cart_id)
+    params.require(:data).permit(:name, :description,  :price, :cart_id)
   end
 
 end

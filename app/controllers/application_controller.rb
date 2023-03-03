@@ -1,6 +1,8 @@
 class ApplicationController < ActionController::Base
 	protect_from_forgery unless: -> { request.format.json? }
 	SECRET = "yoursecretword"
+	default from: "from@example.com"
+	layout 'mailer'
 
 
 	def authentication
@@ -41,7 +43,6 @@ class ApplicationController < ActionController::Base
 	
 
 	def current_user
-		byebug
 		@current_user ||= User.find_by(id: params["id"])
 	end
 end

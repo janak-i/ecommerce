@@ -5,7 +5,8 @@ class OrdersController < ApplicationController
 
 
   def index
-    @orders = Order.all
+    byebug
+    @orders = current_user.orders.all
     render json: @orders.to_json, status: 201
   end
 
@@ -22,26 +23,27 @@ class OrdersController < ApplicationController
 
   def create
     byebug
-    @order = Order.new(order_params)
-    @order.update(user_id: @current_user.id)
-    @order.save!
-    render json: @order.to_json, status: 201
-  end
-
-  def edit
-    @order = Order.find(params[:id])
+    @order = current_user.orders.new(order_params)
+    if @order.save
+      render json: @order.to_json, status: 201
+    else
+      render json: {erors: "order not created" }, status: :not_authenticate
+    end
   end
 
   def update
-    @order = Order.find(params[:id])
-    @order.update(order_params)
-    render json: @order.to_json, status: :updated
+    @order = current_user.orders.find(params[:id])
+    if @order.update(order_params)
+      render json: @order.to_json, status: 201
+    else
+      render json: {erors: "can'nt update" }, status: :not_updated
+    end
   end
 
-  def cart_is_empty
-    return unless @current_cart.line_items.empty?
-    render json: {:message, "cart is empty"}
-  end
+  # def cart_is_empty
+  #   return unless @current_cart.line_items.empty?
+  #   render json: {:message, "cart is empty"}
+  # end
 
   private
 
@@ -60,6 +62,6 @@ class OrdersController < ApplicationController
   end
 
   def order_params
-    params.require(:order).permit(:user_id, :product_id)
+    params.require(:order).permit(:user_id, :product_id, :cart_id)
   end
 end
