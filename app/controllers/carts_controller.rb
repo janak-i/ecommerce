@@ -1,14 +1,9 @@
 class CartsController < ApplicationController
+	before_action :set_cart, only: %i[show edit update destroy]
 
-	def add_item(product_id)
-		byebug
-		product = products.where('product_id = ?', product_id).first
-		if product
-			product.quantity + 1
-			product.save
-		else
-			product = Product.find(product_id)
-			products << product
-		end
+
+	private
+	def set_cart
+		@cart = Cart.find(params[:id])
 	end
 end

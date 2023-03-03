@@ -1,11 +1,19 @@
-# class ProductsController < ApplicationController 
-#   before_action :current_user, :only => [:index, :edit, :update, :destroy]
-  # before_action :is_admin?, :only => [:create]
-  
+class ProductsController < ApplicationController 
+  # before_action :current_user, :only => [:index, :edit, :update, :destroy]
+  # before_action :is_admin, :only => [:create]
+
   def index
-  	@products=current_user.products.all()
-  	render json: @products.to_json, status: :ok
+    @products=Product.all
+    render json: @products.to_json, status: :ok
   end
+
+
+  def index
+    #here we are calling the scope method to find the name of the product#
+    @products = Product.find_name
+    render json: @products.to_json, status: :ok
+  end
+
 
   def show 
   	@product=Product.find(params[:product_id])
@@ -26,12 +34,11 @@
 
 
   def create
-    byebug
     @product = Product.new(product_params)
     if @product.save
       render json: @product.to_json, status: :created
     else
-      render json: {erors: "product not created" }, status: :not_createds
+      render json: {erors: "product not created" }, status: :not_found
     end
   end
 
@@ -44,7 +51,7 @@
     end
   end
 
-  def destroy
+  def destroys
     @product=Product.find(params[:id])
     if @product.destroy
       render json:{data: @product_to_json}, status: :deleted
@@ -53,17 +60,10 @@
     end
   end
 
-
-  def total_price
-    products.to_a.sum(&:full_price)
-  end
-
-
-
   private
 
   def product_params
-    params.require(:product).permit(:name, :description,  :price)
+    params.require(:data).permit(:name, :description,  :price, :cart_id)
   end
 
 end

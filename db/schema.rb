@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_02_27_141256) do
+ActiveRecord::Schema[7.0].define(version: 2023_03_02_141325) do
   create_table "active_admin_comments", force: :cascade do |t|
     t.string "namespace"
     t.text "body"
@@ -66,14 +66,10 @@ ActiveRecord::Schema[7.0].define(version: 2023_02_27_141256) do
   end
 
   create_table "carts", force: :cascade do |t|
-    t.decimal "price"
+    t.integer "total_price"
     t.integer "user_id"
-    t.integer "product_id"
-    t.integer "order_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["order_id"], name: "index_carts_on_order_id"
-    t.index ["product_id"], name: "index_carts_on_product_id"
     t.index ["user_id"], name: "index_carts_on_user_id"
   end
 
@@ -81,7 +77,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_02_27_141256) do
     t.integer "quantity"
     t.integer "product_id"
     t.integer "cart_id"
-    t.integer "order_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -91,6 +86,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_02_27_141256) do
     t.integer "product_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "cart_id"
+    t.index ["cart_id"], name: "index_orders_on_cart_id"
     t.index ["product_id"], name: "index_orders_on_product_id"
     t.index ["user_id"], name: "index_orders_on_user_id"
   end
@@ -101,6 +98,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_02_27_141256) do
     t.decimal "price", default: "0.0"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "cart_id"
+    t.index ["cart_id"], name: "index_products_on_cart_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -113,4 +112,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_02_27_141256) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "orders", "carts"
+  add_foreign_key "products", "carts"
 end

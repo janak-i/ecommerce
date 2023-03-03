@@ -1,62 +1,49 @@
 class OrdersController < ApplicationController
+  # before_action :add_line_items_to_order, only: [:create]
+  before_action :current_user, only: [:create]
+  before_action :set_line_item, only: [:show, :edit, :update, :destroy]
+
 
   def index
-    @orders = Order.all
-    @orders = if params[:search]
-                Order.search(params[:search]).order('created_at ASC')
-                     .paginate(page: params[:page], per_page: 5)
-              else
-                @orders.order('created_at ASC')
-                       .paginate(page: params[:page], per_page: 5)
-              end
+    byebug
+    @orders = current_user.orders.all
+    render json: @orders.to_json, status: 201
   end
 
 
   def show
     @order = Order.find(params[:id])
+    render json: @order.to_json, status: 201
   end
 
-  def new
+
+  def order
     @order = Order.new
-    @cart = @current_cart
   end
 
   def create
-  	byebug
-    @order = Order.new(order_params)
-    @order.update(user_id: @current_user.id)
-    @order.save!
-    render json: @order, status: 201
-  end
-
-  
-  def destroy
-    @order = Order.find(params[:id])
-    @order.destroy
-    respond_to do |format|
-      format.html { redirect_to orders_path }
-      format.json { head :no_content }
-      flash[:info] = 'Order was successfully destroyed.'
+    byebug
+    @order = current_user.orders.new(order_params)
+    if @order.save
+      render json: @order.to_json, status: 201
+    else
+      render json: {erors: "order not created" }, status: :not_authenticate
     end
   end
 
-  def edit
-    @order = Order.find(params[:id])
-  end
-
   def update
-    @order = Order.find(params[:id])
-    @order.update(order_params)
-    redirect_to orders_path
+    @order = current_user.orders.find(params[:id])
+    if @order.update(order_params)
+      render json: @order.to_json, status: 201
+    else
+      render json: {erors: "can'nt update" }, status: :not_updated
+    end
   end
 
-  def cart_is_empty
-    return unless @current_cart.line_items.empty?
-
-    store_location
-    flash[:danger] = 'You cart is empty!'
-    redirect_to cart_path(@current_cart)
-  end
+  # def cart_is_empty
+  #   return unless @current_cart.line_items.empty?
+  #   render json: {:message, "cart is empty"}
+  # end
 
   private
 
@@ -75,6 +62,6 @@ class OrdersController < ApplicationController
   end
 
   def order_params
-    params.require(:order).permit(:user_id, :product_id)
+    params.require(:order).permit(:user_id, :product_id, :cart_id)
   end
 end
