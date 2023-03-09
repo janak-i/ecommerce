@@ -1,11 +1,14 @@
 class OrdersController < ApplicationController
-  # before_action :add_line_items_to_order, only: [:create]
-  before_action :current_user, only: [:create]
-  before_action :set_line_item, only: [:show, :edit, :update, :destroy]
+  before_action :authentication
+  before_action :current_user, only: [:create, :update]
+  before_action :set_product, :only =>[:create, :show, :update, :destroy , :add_product, :remove_product]
+  before_action :add_product, :only=>[:create]
+
+
+ 
 
 
   def index
-    byebug
     @orders = current_user.orders.all
     render json: @orders.to_json, status: 201
   end
@@ -17,13 +20,9 @@ class OrdersController < ApplicationController
   end
 
 
-  def order
-    @order = Order.new
-  end
-
   def create
     byebug
-    @order = current_user.orders.new(order_params)
+    @order = add_product.cart_product.orders.new(order_params)
     if @order.save
       render json: @order.to_json, status: 201
     else
@@ -40,28 +39,45 @@ class OrdersController < ApplicationController
     end
   end
 
-  # def cart_is_empty
-  #   return unless @current_cart.line_items.empty?
-  #   render json: {:message, "cart is empty"}
-  # end
 
+  def total_price
+    products.to_a.sum(&:total_price)
+  end
+  
   private
-
-  def add_line_items_to_order
-    @current_cart.line_items.each do |item|
-      item.cart_id = nil
-      item.order_id = @order.id
-      item.save
-      @order.line_items << item
-    end
-  end
-
-  def reset_sessions_cart
-    Cart.destroy(session[:cart_id])
-    session[:cart_id] = nil
-  end
 
   def order_params
     params.require(:order).permit(:user_id, :product_id, :cart_id)
   end
+
+  def add_product(product_id)
+    byebug
+    product = current_user.products.where('product_id = ?', product_id)
+    if product
+      product.quantity + 1
+      product.update(quantity: product)
+      product.save
+      render json: product.to_json, status: 201
+    else
+      render json:{error_message: "limit exeed"}, status: :not_found
+    end
+  end
+
+  def remove()
+    product=current_user.products.where('product_id = ?', product_id)
+    if product
+      product.quantity-1
+      product.update(quantity: product)
+      product.save
+      render json: product.to_json, status: 201
+    else
+      render json:{error_message: "product is not present"}, status: :not_found
+    end
+  end
+
+  def set_product
+    byebug
+    @product=Product.find(params[:product_id])
+  end
+
 end

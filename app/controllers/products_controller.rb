@@ -1,16 +1,10 @@
 class ProductsController < ApplicationController 
   # before_action :current_user, :only => [:index, :edit, :update, :destroy]
-  # before_action :is_admin, :only => [:create]
+
+  
 
   def index
     @products=Product.all
-    render json: @products.to_json, status: :ok
-  end
-
-
-  def index
-    #here we are calling the scope method to find the name of the product#
-    @products = Product.find_name
     render json: @products.to_json, status: :ok
   end
 
@@ -23,15 +17,6 @@ class ProductsController < ApplicationController
       render json: {errors: "Id not found"}, status: :unprocessable_entity
     end
   end
-
-  def new
-    @product = Product.new
-  end
-
-  def edit
-    Product.find(params[:id])
-  end
-
 
   def create
     @product = Product.new(product_params)
@@ -65,5 +50,4 @@ class ProductsController < ApplicationController
   def product_params
     params.require(:data).permit(:name, :description,  :price, :cart_id)
   end
-
 end

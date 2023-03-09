@@ -1,20 +1,17 @@
 class SessionsController < ApplicationController
 	before_action :authentication, :only => [:login]
-	default from: 'notifications@example.com'
-	before_action :welcome_email, :only=>[:create]
 
 
 	def signup
-		byebug
-		user = User.new(email: params[:email], password_digest: params[:password_digest], user_role: params[:user_role])
+		user = User.new(email: params[:email], password_digest: params[:password_digest])
 		if user.save
-			UserMailer.with(user: @user).welcome_email.deliver_later
 			token = encode_user_data({ user_data: user.id })
 			render json: { token: token }
 		else
 			render json: { message: "invalid credentials" }
 		end
 	end
+
 
 	def change_password
 		user = User.find(params['data'][:id])
@@ -38,6 +35,7 @@ class SessionsController < ApplicationController
 			render json: { message: "invalid credentials" }
 		end
 	end
+	private
 
 	def welcome_email
 		byebug
@@ -45,6 +43,7 @@ class SessionsController < ApplicationController
 		@url  = 'http://example.com/login'
 		mail(to: @user.email, subject: 'you have Successfully register in my application welcome')
 	end
+
 end
 
 
