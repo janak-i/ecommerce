@@ -1,8 +1,6 @@
 class ApplicationController < ActionController::Base
 	protect_from_forgery unless: -> { request.format.json? }
 	SECRET = "yoursecretword"
-	default from: "from@example.com"
-	layout 'mailer'
 
 
 	def authentication
@@ -31,18 +29,13 @@ class ApplicationController < ActionController::Base
 	end
 
 	def is_admin
-		byebug
-		if product.user_role == "admin"
+		if role == "admin"
 		end
-	end
-
-
-	def current_cart
-		@current_cart=Product.find(params[:id])
 	end
 	
 
 	def current_user
+		byebug
 		@current_user ||= User.find_by(id: params["id"])
 	end
 end

@@ -5,7 +5,9 @@ class Product < ApplicationRecord
 	belongs_to :cart
 	validates :name, presence: true
 	# default_scope { where(published: "true") }
-	scope :find_name, ->{where("name =?",'Bat')}
-	scope :find_description, ->{where("description =?", "The virat kohli bat mrf")}
+	# scope :find_name, ->{where("name =?",'Bat')}
+	# scope :find_description, ->{where("description =?", "The virat kohli bat mrf")}
 
 end
+
+
